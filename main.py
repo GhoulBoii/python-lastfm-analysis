@@ -1,51 +1,18 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-csv = None
-with open("data/ghoulboii.csv") as file:
-    csv = pd.read_csv(file)
 
-print("""What do you want?
-1) Top 50 Artists
-2) Top 50 Albums
-3) Top 50 Songs
-4) Number of Songs Per Month
-5) Number of Songs Per Week
-6) Number of Songs Per Hour
-7) Cumulative Plays per Artist over Time
-""")
-# inp = int(input())
+def load_csv(filepath):
+    return pd.read_csv(filepath)
 
 
-# Get Top Songs/Artists/Albums
-def top_music(csv, column_name):
-    return csv[column_name].value_counts().sort_values(ascending=False)
+def top_music(df, column_name, top_n=50):
+    return df[column_name].value_counts().head(top_n)
 
 
-def count_songs_alltime(csv, column_name):
-    csv["Listened At"] = pd.to_datetime(csv["Listened At"], format="%d %b %Y %H:%M")
-    csv["YearMonth"] = csv["Listened At"].dt.to_period("M")
-    csv["YearWeek"] = csv["Listened At"].dt.to_period("W")
-    return csv["YearWeek"].value_counts().sort_index()
-
-
-def count_songs_week(csv):
-    csv["Listened At"] = pd.to_datetime(csv["Listened At"], format="%d %b %Y %H:%M")
-    csv["Day of Week"] = csv["Listened At"].dt.dayofweek
-    csv["Day of Week"] = csv["Day of Week"].map(
-        {
-            0: "Monday",
-            1: "Tuesday",
-            2: "Wednesday",
-            3: "Thursday",
-            4: "Friday",
-            5: "Saturday",
-            6: "Sunday",
-        }
-    )
-
+def daily_counts(df):
     daily_counts = (
-        csv["Day of Week"]
+        df["Day of Week"]
         .value_counts()
         .reindex(
             [
@@ -62,55 +29,114 @@ def count_songs_week(csv):
     return daily_counts
 
 
-def count_songs_hour(csv):
-    csv["Listened At"] = pd.to_datetime(csv["Listened At"], format="%d %b %Y %H:%M")
-    csv["Hour"] = csv["Listened At"].dt.hour
-    return csv["Hour"].value_counts().sort_index()
+def add_datetime_columns(df):
+    df["Listened At"] = pd.to_datetime(df["Listened At"], format="%d %b %Y %H:%M")
+    df["YearMonth"] = df["Listened At"].dt.to_period("M")
+    df["Day of Week"] = df["Listened At"].dt.dayofweek.map(
+        {
+            0: "Monday",
+            1: "Tuesday",
+            2: "Wednesday",
+            3: "Thursday",
+            4: "Friday",
+            5: "Saturday",
+            6: "Sunday",
+        }
+    )
 
 
-def plot_top_music_bargraph(csv, column_name):
-    csv[25::-1].plot(kind="barh")
-    plt.xlabel(column_name)
-    plt.ylabel("Number of Plays")
-    plt.title(f"Top 25 Most Played {column_name}")
+def count_songs_by_period(df, period_column):
+    if period_column != "Day of Week":
+        return df[period_column].value_counts().sort_values()
+    else:
+        return daily_counts(df)
+
+
+def plot_bar_graph(data, xlabel, ylabel, title):
+    data.plot(kind="bar")
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.tight_layout()
     plt.show()
 
 
-def plot_count_songs_bargraph(csv, column_name):
-    csv.plot(kind="bar")
-    plt.ylabel("Number of Plays")
-    plt.title(f"Number of songs played per {column_name}")
+def plot_horizontal_bar_graph(data, xlabel, ylabel, title):
+    data.plot(kind="barh")
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.tight_layout()
     plt.show()
 
 
-def cum_songs(csv):
-    sorted_csv = top_music(csv, column_name="Song")
-    csv["Listened At"] = pd.to_datetime(csv["Listened At"], format="%d %b %Y %H:%M")
-    csv = csv.sort_values(by="Listened At")
-    csv["Cumulative Count"] = csv.groupby("Song").cumcount() + 1
-    top_25_songs = sorted_csv.index[:25]
-    for song in top_25_songs:
-        song_data = csv[csv["Song"] == song]
+def plot_cumulative_trend(df, top_songs):
+    """Plot the cumulative plays over time for the top songs."""
+    for song in top_songs:
+        song_data = df[df["Song"] == song]
         plt.plot(song_data["Listened At"], song_data["Cumulative Count"], label=song)
-    plt.title("Song Trends Over Time")
+    plt.title("Cumulative Song Trends Over Time")
     plt.xlabel("Date")
     plt.ylabel("Cumulative Count")
     plt.xticks(rotation=45)
     plt.legend(title="Songs", bbox_to_anchor=(1.05, 1), loc="upper left")
+    plt.tight_layout()
     plt.show()
 
 
-# sorted_csv = top_music(csv, column_name="Song")
-# print(sorted_csv)
-# plot_top_music_bargraph(sorted_csv, column_name="Song")
+def main():
+    # Load data
+    df = load_csv("data/ghoulboii.csv")
 
-# sorted_csv = count_songs_time(csv, column_name="Week")
-# plot_count_songs_bargraph(sorted_csv, column_name="Month")
+    # Add necessary datetime columns
+    add_datetime_columns(df)
 
-# sorted_csv = count_songs_week(csv)
-# plot_count_songs_bargraph(sorted_csv, column_name="Month")
+    # Ask the user for input
+    print("""What do you want?
+    1) Top 50 Artists
+    2) Top 50 Albums
+    3) Top 50 Songs
+    4) Number of Songs Per Month
+    5) Number of Songs Per Week
+    6) Number of Songs Per Hour
+    7) Cumulative Plays per Artist over Time
+    """)
 
-# sorted_csv = count_songs_hour(csv)
-# plot_count_songs_bargraph(sorted_csv, column_name="Hour")
+    choice = int(input())
 
-cum_songs(csv)
+    if choice == 1:
+        data = top_music(df, "Artist", top_n=50)
+        plot_horizontal_bar_graph(data, "Plays", "Artist", "Top 50 Artists")
+
+    elif choice == 2:
+        data = top_music(df, "Album", top_n=50)
+        plot_horizontal_bar_graph(data, "Plays", "Album", "Top 50 Albums")
+
+    elif choice == 3:
+        data = top_music(df, "Song", top_n=50)
+        plot_horizontal_bar_graph(data, "Plays", "Song", "Top 50 Songs")
+
+    elif choice == 4:
+        data = count_songs_by_period(df, "YearMonth")
+        plot_bar_graph(data, "Month", "Number of Plays", "Number of Songs Per Month")
+
+    elif choice == 5:
+        data = count_songs_by_period(df, "Day of Week")
+        plot_bar_graph(data, "Week", "Number of Plays", "Number of Songs Per Week")
+
+    elif choice == 6:
+        data = count_songs_by_period(df, "Hour")
+        plot_bar_graph(data, "Hour", "Number of Plays", "Number of Songs Per Hour")
+
+    elif choice == 7:
+        top_25_songs = top_music(df, "Song", top_n=25).index
+        df = df.sort_values(by="Listened At")
+        df["Cumulative Count"] = df.groupby("Song").cumcount() + 1
+        plot_cumulative_trend(df, top_25_songs)
+
+    else:
+        print("Wrong Choice. Rerun the Program")
+
+
+if __name__ == "__main__":
+    main()
