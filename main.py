@@ -16,7 +16,7 @@ choice = int(input("\nEnter your choice (1-3): "))
 
 # Defining vars
 df = pd.read_csv(
-    "data/Akshitamaity.csv", names=["Artist", "Album", "Song", "Listened At"]
+    "data.csv", names=["Artist", "Album", "Song", "Listened At"]
 )
 xlabel = ""
 ylabel = ""
