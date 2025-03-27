@@ -1,8 +1,15 @@
 <h1 align="center"> Python Lastfm Analysis </h1>
 
+
+Top 10 Songs               |  Number of Songs Per Month | Cumulative Plays per Artist over Time |
+:-------------------------:|:-------------------------:|:---------------------------------:|
+![Top 10 Songs](https://github.com/user-attachments/assets/e6152f5c-0eb2-47d4-a383-527ab9f5f343)  |  ![Number of Songs Per Month](https://github.com/user-attachments/assets/abd91034-c7aa-41a5-87d8-684921ab8723) |  ![Cumulative Plays per Artist over Time](https://github.com/user-attachments/assets/ed69b04d-601b-43e5-a652-babe66c85cc1)
+
+
 ## Introduction
 
 Welcome to Python Lastfm Analysis! This project is a simple Python script that analyzes your Last.fm listening data. It provides visualizations for the top 10 songs, the number of songs listened to per month, and cumulative plays per artist over time. The script uses pandas for data manipulation and matplotlib for plotting.
+
 
 
 ## Features
