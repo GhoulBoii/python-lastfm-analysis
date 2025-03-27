@@ -8,8 +8,7 @@ Top 10 Songs               |  Number of Songs Per Month | Cumulative Plays per A
 
 ## Introduction
 
-Welcome to Python Lastfm Analysis! This project is a simple Python script that analyzes your Last.fm listening data. It provides visualizations for the top 10 songs, the number of songs listened to per month, and cumulative plays per artist over time. The script uses pandas for data manipulation and matplotlib for plotting.
-
+This project is a simple Python script that analyzes your Last.fm listening data. It provides visualizations for the top 10 songs, the number of songs listened to per month, and cumulative plays per artist over time. The script uses pandas for data manipulation and matplotlib for plotting.
 
 
 ## Features
@@ -43,7 +42,7 @@ Welcome to Python Lastfm Analysis! This project is a simple Python script that a
 ### Usage
 
 1. **Prepare your data:**
-    Go to this [website](https://benjaminbenben.com/lastfm-to-csv/) and enter your Last.fm username. You will get a csv of your data.
+    Go to [this website](https://benjaminbenben.com/lastfm-to-csv/) and enter your Last.fm username. You will get a csv of your data.
 
 2. **Run the script:**
    ```sh
@@ -53,16 +52,18 @@ Welcome to Python Lastfm Analysis! This project is a simple Python script that a
 3. **Follow the on-screen instructions:**
    Select an option from the menu to generate the desired visualization.
 
+
 ## Disclaimers
 
 - This script is intended for educational purposes and personal use.
 - The script does not handle errors related to missing or malformed data.
 
+
 ## Credits
 
 - [Last.fm to CSV Convertor](https://github.com/benfoxall/lastfm-to-csv) for giving an easy way to convert the Last.fm data
 
+
 ## License
 
 This project is licensed under the GPL-3.0 License. See the [LICENSE](LICENSE) file for details.
-
